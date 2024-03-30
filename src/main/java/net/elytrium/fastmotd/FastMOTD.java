@@ -43,6 +43,8 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
+import me.chrommob.fakeplayerapi.FakePlayerAPI;
+
 import java.lang.reflect.Field;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -73,16 +75,9 @@ import net.kyori.adventure.text.serializer.ComponentSerializer;
 import org.bstats.velocity.Metrics;
 import org.slf4j.Logger;
 
-@Plugin(
-    id = "fastmotd",
-    name = "FastMOTD",
-    version = BuildConstants.VERSION,
-    description = "MOTD plugin that uses FastPrepareAPI.",
-    url = "https://elytrium.net/",
-    authors = {
-        "Elytrium (https://elytrium.net/)",
-    }
-)
+@Plugin(id = "fastmotd", name = "FastMOTD", version = BuildConstants.VERSION, description = "MOTD plugin that uses FastPrepareAPI.", url = "https://elytrium.net/", authors = {
+    "Elytrium (https://elytrium.net/)",
+})
 public class FastMOTD {
 
   private static final Field connectionManager;
@@ -116,7 +111,8 @@ public class FastMOTD {
   }
 
   @Inject
-  public FastMOTD(Logger logger, ProxyServer server, Metrics.Factory metricsFactory, @DataDirectory Path dataDirectory) {
+  public FastMOTD(Logger logger, ProxyServer server, Metrics.Factory metricsFactory,
+      @DataDirectory Path dataDirectory) {
     this.logger = logger;
     this.server = (VelocityServer) server;
     this.metricsFactory = metricsFactory;
@@ -135,8 +131,8 @@ public class FastMOTD {
       throw new ReflectionException(e);
     }
 
-    this.preparedPacketFactory =
-        new PreparedPacketFactory(PreparedPacket::new, StateRegistry.LOGIN, false, 1, 1, false, true);
+    this.preparedPacketFactory = new PreparedPacketFactory(PreparedPacket::new, StateRegistry.LOGIN, false, 1, 1, false,
+        true);
 
     this.reload();
   }
@@ -144,7 +140,8 @@ public class FastMOTD {
   public void reload() {
     Settings.IMP.reload(this.configPath);
 
-    if (!UpdatesChecker.checkVersionByURL("https://raw.githubusercontent.com/Elytrium/FastMOTD/master/VERSION", Settings.IMP.VERSION)) {
+    if (!UpdatesChecker.checkVersionByURL("https://raw.githubusercontent.com/Elytrium/FastMOTD/master/VERSION",
+        Settings.IMP.VERSION)) {
       this.logger.error("****************************************");
       this.logger.warn("The new FastMOTD update was found, please update.");
       this.logger.error("https://github.com/Elytrium/FastMOTD/releases/");
@@ -183,7 +180,8 @@ public class FastMOTD {
     eventManager.unregisterListeners(this);
     eventManager.register(this, new CompatPingListener(this));
 
-    if (Settings.IMP.SHUTDOWN_SCHEDULER.SHUTDOWN_SCHEDULER_ENABLED && Settings.IMP.SHUTDOWN_SCHEDULER.SHUTDOWN_ON_ZERO_PLAYERS) {
+    if (Settings.IMP.SHUTDOWN_SCHEDULER.SHUTDOWN_SCHEDULER_ENABLED
+        && Settings.IMP.SHUTDOWN_SCHEDULER.SHUTDOWN_ON_ZERO_PLAYERS) {
       eventManager.register(this, new DisconnectOnZeroPlayersListener(this));
     }
 
@@ -210,15 +208,17 @@ public class FastMOTD {
     }).collect(Collectors.toSet());
 
     this.generateMOTDGenerators(serializer, Settings.IMP.MAIN.VERSION_NAME, Settings.IMP.MAIN.DESCRIPTIONS,
-            Settings.IMP.MAIN.FAVICONS, Settings.IMP.MAIN.INFORMATION, this.motdGenerators, this.protocolPointers,
-            Settings.IMP.MAIN.VERSIONS.DESCRIPTIONS, Settings.IMP.MAIN.VERSIONS.FAVICONS, Settings.IMP.MAIN.VERSIONS.INFORMATION,
-            Settings.IMP.MAIN.DOMAINS, this.domainMOTD);
+        Settings.IMP.MAIN.FAVICONS, Settings.IMP.MAIN.INFORMATION, this.motdGenerators, this.protocolPointers,
+        Settings.IMP.MAIN.VERSIONS.DESCRIPTIONS, Settings.IMP.MAIN.VERSIONS.FAVICONS,
+        Settings.IMP.MAIN.VERSIONS.INFORMATION,
+        Settings.IMP.MAIN.DOMAINS, this.domainMOTD);
 
-    this.generateMOTDGenerators(serializer, Settings.IMP.MAINTENANCE.VERSION_NAME, Settings.IMP.MAINTENANCE.DESCRIPTIONS,
-            Settings.IMP.MAINTENANCE.FAVICONS, Settings.IMP.MAINTENANCE.INFORMATION, this.maintenanceMOTDGenerators,
-            this.maintenanceProtocolPointers, Settings.IMP.MAINTENANCE.VERSIONS.DESCRIPTIONS,
-            Settings.IMP.MAINTENANCE.VERSIONS.FAVICONS, Settings.IMP.MAINTENANCE.VERSIONS.INFORMATION,
-            Settings.IMP.MAINTENANCE.DOMAINS, this.domainMaintenanceMOTD);
+    this.generateMOTDGenerators(serializer, Settings.IMP.MAINTENANCE.VERSION_NAME,
+        Settings.IMP.MAINTENANCE.DESCRIPTIONS,
+        Settings.IMP.MAINTENANCE.FAVICONS, Settings.IMP.MAINTENANCE.INFORMATION, this.maintenanceMOTDGenerators,
+        this.maintenanceProtocolPointers, Settings.IMP.MAINTENANCE.VERSIONS.DESCRIPTIONS,
+        Settings.IMP.MAINTENANCE.VERSIONS.FAVICONS, Settings.IMP.MAINTENANCE.VERSIONS.INFORMATION,
+        Settings.IMP.MAINTENANCE.DOMAINS, this.domainMaintenanceMOTD);
 
     this.updater = this.server.getScheduler()
         .buildTask(this, this::updateMOTD)
@@ -227,21 +227,22 @@ public class FastMOTD {
   }
 
   private void generateMOTDGenerators(
-          ComponentSerializer<Component, Component, String> serializer,
-          String versionName, List<String> defaultDescriptions, List<String> defaultFavicons,
-          List<String> defaultInformation, List<MOTDGenerator> dest, Int2IntMap destPointers,
-          Map<String, List<String>> descriptionVersions, Map<String, List<String>> faviconVersions,
-          Map<String, List<String>> informationVersions, Map<String, Settings.DOMAIN_MOTD_NODE> domainMotd,
-          Map<String, MOTDGenerator> domainDest) {
+      ComponentSerializer<Component, Component, String> serializer,
+      String versionName, List<String> defaultDescriptions, List<String> defaultFavicons,
+      List<String> defaultInformation, List<MOTDGenerator> dest, Int2IntMap destPointers,
+      Map<String, List<String>> descriptionVersions, Map<String, List<String>> faviconVersions,
+      Map<String, List<String>> informationVersions, Map<String, Settings.DOMAIN_MOTD_NODE> domainMotd,
+      Map<String, MOTDGenerator> domainDest) {
     descriptionVersions = Objects.requireNonNullElseGet(descriptionVersions, HashMap::new);
     faviconVersions = Objects.requireNonNullElseGet(faviconVersions, HashMap::new);
     informationVersions = Objects.requireNonNullElseGet(informationVersions, HashMap::new);
-    List<String> nonNullDefaultDescriptions = Objects.requireNonNullElseGet(defaultDescriptions, Collections::emptyList);
+    List<String> nonNullDefaultDescriptions = Objects.requireNonNullElseGet(defaultDescriptions,
+        Collections::emptyList);
     List<String> nonNullDefaultFavicons = Objects.requireNonNullElseGet(defaultFavicons, Collections::emptyList);
     List<String> nonNullDefaultInformation = Objects.requireNonNullElseGet(defaultInformation, Collections::emptyList);
 
-    MOTDGenerator defaultMotdGenerator =
-        new MOTDGenerator(this, serializer, versionName, nonNullDefaultDescriptions, nonNullDefaultFavicons, nonNullDefaultInformation);
+    MOTDGenerator defaultMotdGenerator = new MOTDGenerator(this, serializer, versionName, nonNullDefaultDescriptions,
+        nonNullDefaultFavicons, nonNullDefaultInformation);
     defaultMotdGenerator.generate();
     dest.add(defaultMotdGenerator);
 
@@ -272,9 +273,9 @@ public class FastMOTD {
       final int idx = dest.size();
       final int key = identical.iterator().nextInt();
       MOTDGenerator motdGenerator = new MOTDGenerator(this, serializer, versionName,
-              protocolDescriptions.getOrDefault(key, nonNullDefaultDescriptions),
-              protocolIcons.getOrDefault(key, nonNullDefaultFavicons),
-              protocolInformation.getOrDefault(key, nonNullDefaultInformation));
+          protocolDescriptions.getOrDefault(key, nonNullDefaultDescriptions),
+          protocolIcons.getOrDefault(key, nonNullDefaultFavicons),
+          protocolInformation.getOrDefault(key, nonNullDefaultInformation));
       motdGenerator.generate();
       dest.add(motdGenerator);
       identical.forEach(p -> destPointers.put(p, idx));
@@ -282,7 +283,7 @@ public class FastMOTD {
 
     domainMotd.forEach((domain, motdNode) -> {
       MOTDGenerator motdGenerator = new MOTDGenerator(this, serializer, versionName,
-              motdNode.DESCRIPTION, motdNode.FAVICON, motdNode.INFORMATION);
+          motdNode.DESCRIPTION, motdNode.FAVICON, motdNode.INFORMATION);
       motdGenerator.generate();
       domainDest.put(domain, motdGenerator);
     });
@@ -331,7 +332,8 @@ public class FastMOTD {
   }
 
   private int getOnline() {
-    int online = this.server.getPlayerCount() + Settings.IMP.MAIN.FAKE_ONLINE_ADD_SINGLE;
+    int online = this.server.getPlayerCount() + Settings.IMP.MAIN.FAKE_ONLINE_ADD_SINGLE
+        + FakePlayerAPI.getInstance().getTotalPlayerCount();
     return online * (Settings.IMP.MAIN.FAKE_ONLINE_ADD_PERCENT + 100) / 100;
   }
 
@@ -349,24 +351,24 @@ public class FastMOTD {
   public ByteBuf getNext(ProtocolVersion version, String serverAddress) {
     if (Settings.IMP.MAINTENANCE.MAINTENANCE_ENABLED) {
       return this.domainMaintenanceMOTD.getOrDefault(serverAddress, this.maintenanceMOTDGenerators.get(
-              this.maintenanceProtocolPointers.getOrDefault(version.getProtocol(), 0)))
-              .getNext(version, !Settings.IMP.MAINTENANCE.SHOW_VERSION);
+          this.maintenanceProtocolPointers.getOrDefault(version.getProtocol(), 0)))
+          .getNext(version, !Settings.IMP.MAINTENANCE.SHOW_VERSION);
     } else {
       return this.domainMOTD.getOrDefault(serverAddress, this.motdGenerators.get(
-              this.protocolPointers.getOrDefault(version.getProtocol(), 0)))
-              .getNext(version, true);
+          this.protocolPointers.getOrDefault(version.getProtocol(), 0)))
+          .getNext(version, true);
     }
   }
 
   public ServerPing getNextCompat(ProtocolVersion version, String serverAddress) {
     if (Settings.IMP.MAINTENANCE.MAINTENANCE_ENABLED) {
       return this.domainMaintenanceMOTD.getOrDefault(serverAddress, this.maintenanceMOTDGenerators.get(
-              this.maintenanceProtocolPointers.getOrDefault(version.getProtocol(), 0)))
-              .getNextCompat(version, !Settings.IMP.MAINTENANCE.SHOW_VERSION);
+          this.maintenanceProtocolPointers.getOrDefault(version.getProtocol(), 0)))
+          .getNextCompat(version, !Settings.IMP.MAINTENANCE.SHOW_VERSION);
     } else {
       return this.domainMOTD.getOrDefault(serverAddress, this.motdGenerators.get(
-              this.protocolPointers.getOrDefault(version.getProtocol(), 0)))
-              .getNextCompat(version, true);
+          this.protocolPointers.getOrDefault(version.getProtocol(), 0)))
+          .getNextCompat(version, true);
     }
   }
 
