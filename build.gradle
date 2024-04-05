@@ -35,10 +35,13 @@ repositories {
         setName("sonatype-snapshots-repo")
         setUrl("https://s01.oss.sonatype.org/content/repositories/snapshots/")
     }
+    maven() {
+        setName("jitpack-repo")
+        setUrl("https://jitpack.io")
+    }
 }
 
 dependencies {
-    implementation(fileTree("libs").matching { include("*.jar") })
     implementation("net.elytrium.commons:kyori:1.3.0")
     implementation("net.elytrium.commons:velocity:1.3.0")
     implementation("net.elytrium.commons:utils:1.3.0")
@@ -46,6 +49,7 @@ dependencies {
     implementation("net.elytrium:serializer:1.1.1")
     implementation('it.unimi.dsi:fastutil-core:8.5.11')
     compileOnly("com.velocitypowered:velocity-api:3.3.0-SNAPSHOT")
+    compileOnly("com.github.Folia-Inquisitors:FakePlayerAPI:d9387d30a9")
     annotationProcessor("com.velocitypowered:velocity-api:3.3.0-SNAPSHOT")
     compileOnly("com.velocitypowered:velocity-proxy:3.3.0-SNAPSHOT")
     compileOnly('com.github.spotbugs:spotbugs-annotations:4.7.3')
